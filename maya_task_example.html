@@ -1,0 +1,118 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Todo list</title>
+	<style type="text/css">
+		* {
+		  	box-sizing: border-box;
+		}
+
+		ul {
+			list-style: none;
+		  	margin: 0;
+		  	padding: 0;
+		}
+
+		ul li {
+			/*position: relative;*/
+			padding: 12px 8px 12px 40px;
+			list-style-type: none;
+			background: #eee;
+			font-size: 18px;
+
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		ul li:nth-child(odd) {
+		  background: #f9f9f9;
+		}
+
+		ul li:hover {
+		  background: #ddd;
+		}
+
+		.centered {
+			max-width: 500px;
+    		margin: 0 auto;
+		}
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript">
+		var myItems = "";
+		const myKey = "myItems";
+		var list;
+
+		function addItem() {
+			// Get neccessary info
+			var itemTitle = document.getElementById('textfield').value;
+			myItems += itemTitle + ":";
+			localStorage.setItem(myKey, myItems);
+			
+			// Make a new <li> and add to list
+			var listItem = $('<li><input type="checkbox"><span class="title"> ' + itemTitle + '</span></li>')[0];
+			list.append(listItem);
+
+			// Reset textfield
+			document.getElementById('textfield').value = "";
+		}
+
+		function deleteSelected() {
+			// Get all selected
+			var selectedItems = $('input:checked');
+			
+			// Delete selected
+			for(var i = 0; i < selectedItems.length; i++) {
+				selectedItems[i].parentElement.remove();
+			}
+
+			rebuildItemString();
+		}
+
+		function rebuildItemString() {
+			var items = $('.title');
+			myItems = "";
+
+			for (var i = items.length - 1; i >= 0; i--) {
+				myItems += items[i].innerHTML + ":";
+			}
+
+			localStorage.setItem(myKey, myItems);
+		}
+
+		$(document).ready(function() {
+			list = document.getElementById('list');
+			var storageItems = localStorage.getItem(myKey);
+
+			if(storageItems != null) {
+				var itemTitles = storageItems.split(":");
+
+				for (var i = 0; i < itemTitles.length; i++) {
+					var itemTitle = itemTitles[i];
+					if (itemTitle.length > 0) {
+						myItems += itemTitle + ":";
+						var listItem = $('<li><input type="checkbox"><span class="title"> ' + itemTitle + '</span></li>')[0];
+						list.append(listItem);
+					}
+				}
+			}
+		});
+	</script>
+</head>
+
+<body>
+	<div class="centered">
+		<h1>Todo List</h1>
+		
+		<input id ="textfield" type="text" name="textfield" placeholder="Enter something">
+		<button onclick="addItem()">Add</button>
+		<button onclick="deleteSelected()">Delete Selected</button>
+
+		<h3>My todos:</h3>
+		<ul id="list">
+		</ul>
+	</div>
+</body>
+</html>
